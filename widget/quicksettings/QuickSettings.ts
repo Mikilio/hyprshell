@@ -15,70 +15,104 @@ import options from "options"
 const { bar, quicksettings } = options
 const media = (await Service.import("mpris")).bind("players")
 const layout = Utils.derive([bar.position, quicksettings.position], (bar, qs) =>
-    `${bar}-${qs}` as const,
+  `${bar}-${qs}` as const,
 )
+const bluetooth = await Service.import("bluetooth")
+const network = await Service.import("network")
+const powerprof = await Service.import("powerprofiles")
+
+type Switch = () => Gtk.Widget;
+
+const Options = () => {
+  let options: Array<[Switch, Switch] | [Switch]> = [];
+  if (network.primary == "wifi") {
+    options.push([NetworkToggle, WifiSelection]);
+  }
+  if (bluetooth.enabled) {
+    options.push([BluetoothToggle, BluetoothDevices]);
+  }
+  if (powerprof.active_profile) {
+    options.push([ProfileToggle, ProfileSelector]);
+  }
+  options.push([DarkModeToggle]);
+  options.push([MicMute]);
+  options.push([DND]);
+  return options
+}
 
 const Row = (
-    toggles: Array<() => Gtk.Widget> = [],
-    menus: Array<() => Gtk.Widget> = [],
+  toggles: Array<Switch> = [],
+  menus: Array<Switch> = [],
 ) => Widget.Box({
-    vertical: true,
-    children: [
-        Widget.Box({
-            homogeneous: true,
-            class_name: "row horizontal",
-            children: toggles.map(w => w()),
-        }),
-        ...menus.map(w => w()),
-    ],
+  vertical: true,
+  children: [
+    Widget.Box({
+      homogeneous: true,
+      class_name: "row horizontal",
+      children: toggles.map(w => w()),
+    }),
+    ...menus.map(w => w()),
+  ],
 })
 
-const Settings = () => Widget.Box({
+const Settings = (
+  switches: Array<[Switch, Switch] | [Switch]> = [],
+  width: number = 2,
+) => {
+  let rows: any = [];
+
+  while (switches?.length) {
+    let toggles: Array<Switch> = []
+    let menus: Array<Switch> = []
+    switches.splice(0, width).map(s => {
+      toggles.push(s[0]);
+      if (s[1]) {
+        menus.push(s[1]);
+      }
+    })
+    rows.push(Row(toggles, menus));
+  }
+
+  return Widget.Box({
     vertical: true,
     class_name: "quicksettings vertical",
     css: quicksettings.width.bind().as(w => `min-width: ${w}px;`),
     children: [
-        Header(),
-        Widget.Box({
-            class_name: "sliders-box vertical",
-            vertical: true,
-            children: [
-                Row(
-                    [Volume],
-                    [SinkSelector, AppMixer],
-                ),
-                Microphone(),
-                Brightness(),
-            ],
-        }),
-        Row(
-            [NetworkToggle, BluetoothToggle],
-            [WifiSelection, BluetoothDevices],
-        ),
-        Row(
-            [ProfileToggle, DarkModeToggle],
-            [ProfileSelector],
-        ),
-        Row([MicMute, DND]),
-        Widget.Box({
-            visible: media.as(l => l.length > 0),
-            child: Media(),
-        }),
+      Header(),
+      Widget.Box({
+        class_name: "sliders-box vertical",
+        vertical: true,
+        children: [
+          Row(
+            [Volume],
+            [SinkSelector, AppMixer],
+          ),
+          Microphone(),
+          Brightness(),
+        ],
+      }),
+      ...rows,
+      Widget.Box({
+        visible: media.as(l => l.length > 0),
+        child: Media(),
+      }),
     ],
-})
+  })
+}
 
 const QuickSettings = () => PopupWindow({
-    name: "quicksettings",
-    exclusivity: "exclusive",
-    transition: bar.position.bind().as(pos => pos === "top" ? "slide_down" : "slide_up"),
-    layout: layout.value,
-    child: Settings(),
+  name: "quicksettings",
+  exclusivity: "exclusive",
+  transition: bar.position.bind().as(pos => pos === "top" ? "slide_down" : "slide_up"),
+  layout: layout.value,
+
+  child: Settings(Options()),
 })
 
 export function setupQuickSettings() {
+  App.addWindow(QuickSettings())
+  layout.connect("changed", () => {
+    App.removeWindow("quicksettings")
     App.addWindow(QuickSettings())
-    layout.connect("changed", () => {
-        App.removeWindow("quicksettings")
-        App.addWindow(QuickSettings())
-    })
+  })
 }

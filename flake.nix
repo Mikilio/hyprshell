@@ -8,39 +8,7 @@
     ...
   }: {
     packages.x86_64-linux.default =
-      nixpkgs.legacyPackages.x86_64-linux.callPackage ./ags {inherit inputs;};
-
-    # nixos config
-    nixosConfigurations = {
-      "nixos" = nixpkgs.lib.nixosSystem {
-        system = "x86_64-linux";
-        specialArgs = {
-          inherit inputs;
-          asztal = self.packages.x86_64-linux.default;
-        };
-        modules = [
-          ./nixos/nixos.nix
-          home-manager.nixosModules.home-manager
-          {networking.hostName = "nixos";}
-        ];
-      };
-    };
-
-    # macos hm config
-    homeConfigurations = {
-      "demeter" = home-manager.lib.homeManagerConfiguration {
-        pkgs = nixpkgs.legacyPackages.x86_64-darwin;
-        extraSpecialArgs = {inherit inputs;};
-        modules = [
-          ({pkgs, ...}: {
-            nix.package = pkgs.nix;
-            home.username = "demeter";
-            home.homeDirectory = "/Users/demeter";
-            imports = [./macos/home.nix];
-          })
-        ];
-      };
-    };
+      nixpkgs.legacyPackages.x86_64-linux.callPackage ./. {inherit inputs;};
   };
 
   inputs = {

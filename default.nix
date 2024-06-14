@@ -22,7 +22,7 @@
   gtk3,
   which,
 }: let
-  name = "asztal";
+  name = "hyprshell";
 
   ags = inputs.ags.packages.${system}.default.override {
     extraPackages = [accountsservice];

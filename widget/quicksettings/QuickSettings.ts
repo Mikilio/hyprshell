@@ -3,7 +3,8 @@ import { ProfileSelector, ProfileToggle } from "./widgets/PowerProfile"
 import { Header } from "./widgets/Header"
 import { Volume, Microphone, SinkSelector, AppMixer } from "./widgets/Volume"
 import { Brightness } from "./widgets/Brightness"
-import { NetworkToggle, WifiSelection } from "./widgets/Network"
+import { WifiToggle, WifiSelection } from "./widgets/Network"
+import { VpnToggle, VpnConnections } from "./widgets/VPN"
 import { BluetoothToggle, BluetoothDevices } from "./widgets/Bluetooth"
 import { DND } from "./widgets/DND"
 import { DarkModeToggle } from "./widgets/DarkMode"
@@ -26,7 +27,7 @@ type Switch = () => Gtk.Widget;
 const Options = () => {
   let options: Array<[Switch, Switch] | [Switch]> = [];
   if (network.primary == "wifi") {
-    options.push([NetworkToggle, WifiSelection]);
+    options.push([WifiToggle, WifiSelection]);
   }
   if (bluetooth.enabled) {
     options.push([BluetoothToggle, BluetoothDevices]);
@@ -34,6 +35,7 @@ const Options = () => {
   if (powerprof.active_profile) {
     options.push([ProfileToggle, ProfileSelector]);
   }
+  options.push([VpnToggle, VpnConnections]);
   options.push([DarkModeToggle]);
   options.push([MicMute]);
   options.push([DND]);

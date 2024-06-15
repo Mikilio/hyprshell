@@ -141,6 +141,15 @@ const options = mkOptions(OPTIONS, {
       monochrome: opt(false),
       action: opt(() => App.toggleWindow("powermenu")),
     },
+    volume: {
+      ignore: opt([
+        "OBS Monitor",
+        "To Stream",
+        "Copy to Stream",
+        "Easy Effects Sink",
+        "Easy Effects Source",
+      ])
+    }
   },
 
   launcher: {

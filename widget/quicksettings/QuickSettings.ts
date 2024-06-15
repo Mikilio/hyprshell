@@ -29,7 +29,7 @@ const Options = () => {
   if (network.primary == "wifi") {
     options.push([WifiToggle, WifiSelection]);
   }
-  if (bluetooth.enabled) {
+  if (Utils.exec("which bluetoothctl", () => true, () => false)) {
     options.push([BluetoothToggle, BluetoothDevices]);
   }
   if (powerprof.active_profile) {

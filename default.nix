@@ -19,6 +19,7 @@
   hyprpicker,
   pavucontrol,
   networkmanager,
+  networkmanagerapplet,
   gtk3,
   which,
 }: let
@@ -44,6 +45,7 @@
     hyprpicker
     pavucontrol
     networkmanager
+    networkmanagerapplet
     gtk3
   ];
 

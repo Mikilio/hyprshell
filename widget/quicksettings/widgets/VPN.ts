@@ -59,5 +59,15 @@ export const VpnConnections = () => Menu({
         .filter(d => d.id)
         .map(VpnItem)),
     }),
+    Widget.Separator(),
+    Widget.Button({
+      on_clicked: () => sh(options.quicksettings.networkSettings.value),
+      child: Widget.Box({
+        children: [
+          Widget.Icon(icons.ui.settings),
+          Widget.Label("Network"),
+        ],
+      }),
+    }),
   ],
 })

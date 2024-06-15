@@ -18,7 +18,6 @@ const media = (await Service.import("mpris")).bind("players")
 const layout = Utils.derive([bar.position, quicksettings.position], (bar, qs) =>
   `${bar}-${qs}` as const,
 )
-const bluetooth = await Service.import("bluetooth")
 const network = await Service.import("network")
 const powerprof = await Service.import("powerprofiles")
 
@@ -35,7 +34,9 @@ const Options = () => {
   if (powerprof.active_profile) {
     options.push([ProfileToggle, ProfileSelector]);
   }
-  options.push([VpnToggle, VpnConnections]);
+  if (network.vpn.connections.length > 0) {
+    options.push([VpnToggle, VpnConnections]);
+  }
   options.push([DarkModeToggle]);
   options.push([MicMute]);
   options.push([DND]);

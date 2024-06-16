@@ -194,7 +194,7 @@ const options = mkOptions(OPTIONS, {
 
   quicksettings: {
     avatar: {
-      image: opt(`/var/lib/AccountsService/icons/${Utils.USER}`),
+      image: opt(`/home/${Utils.USER}/.face`),
       size: opt(70),
     },
     width: opt(380),

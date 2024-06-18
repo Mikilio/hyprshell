@@ -16,11 +16,16 @@ window.indicator {
         }
     }
 
-    .microphone {
+    .switches {
         @include floating-widget;
         margin: $spacing * 2;
         padding: $popover-padding * 2;
         font-size: 58px;
+        label,
+        image {
+          font-weight: bold;
+        }
+
         color: transparentize($fg, .1)
     }
 }

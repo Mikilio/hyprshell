@@ -228,7 +228,7 @@ const options = mkOptions(OPTIONS, {
         v: opt<"start" | "center" | "end">("center"),
       },
     },
-    microphone: {
+    switches: {
       pack: {
         h: opt<"start" | "center" | "end">("center"),
         v: opt<"start" | "center" | "end">("end"),

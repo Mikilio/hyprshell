@@ -1,6 +1,6 @@
 import { type Stream } from "types/service/audio"
 import { Arrow, Menu } from "../ToggleButton"
-import { dependencies, icon, sh } from "lib/utils"
+import { dependencies, sh } from "lib/utils"
 import icons from "lib/icons.js"
 const audio = await Service.import("audio")
 const { ignore } = options.bar.volume
@@ -11,8 +11,7 @@ const VolumeIndicator = (type: Type = "speaker") => Widget.Button({
   vpack: "center",
   on_clicked: () => audio[type].is_muted = !audio[type].is_muted,
   child: Widget.Icon({
-    icon: audio[type].bind("icon_name")
-      .as(i => icon(i || "", icons.audio.mic.high)),
+    icon: icons.audio.type[type],
     tooltipText: audio[type].bind("volume")
       .as(vol => `Volume: ${Math.floor(vol * 100)}%`),
   }),
@@ -56,6 +55,10 @@ export const Microphone = () => Widget.Box({
   children: [
     VolumeIndicator("microphone"),
     VolumeSlider("microphone"),
+    Widget.Box({
+      vpack: "center",
+      child: Arrow("source-selector"),
+    }),
   ],
 })
 
@@ -95,7 +98,7 @@ const SinkItem = (stream: Stream) => Widget.Button({
   child: Widget.Box({
     children: [
       Widget.Icon({
-        icon: icon(stream.icon_name || "", icons.fallback.audio),
+        icon: Utils.lookUpIcon(stream.icon_name) ? stream.icon_name : icons.fallback.audio,
         tooltip_text: stream.icon_name || "",
       }),
       Widget.Label((stream.description || "").split(" ").slice(0, 4).join(" ")),
@@ -104,6 +107,26 @@ const SinkItem = (stream: Stream) => Widget.Button({
         hexpand: true,
         hpack: "end",
         visible: audio.speaker.bind("stream").as((s: Stream) => s === stream.stream),
+      }),
+    ],
+  }),
+})
+
+const SourceItem = (stream: Stream) => Widget.Button({
+  hexpand: true,
+  on_clicked: () => audio.microphone = stream,
+  child: Widget.Box({
+    children: [
+      Widget.Icon({
+        icon: Utils.lookUpIcon(stream.icon_name) ? stream.icon_name : icons.fallback.audio,
+        tooltip_text: stream.icon_name || "",
+      }),
+      Widget.Label((stream.description || "").split(" ").slice(0, 4).join(" ")),
+      Widget.Icon({
+        icon: icons.ui.tick,
+        hexpand: true,
+        hpack: "end",
+        visible: audio.microphone.bind("stream").as((s: Stream) => s === stream.stream),
       }),
     ],
   }),
@@ -150,6 +173,22 @@ export const SinkSelector = () => Menu({
       children: audio.bind("speakers").as((a: Stream[]) => a
         .filter(({ stream }) => !ignore.value.includes(stream.description))
         .map(SinkItem)),
+    }),
+    Widget.Separator(),
+    SettingsButton(),
+  ],
+})
+
+export const SourceSelector = () => Menu({
+  name: "source-selector",
+  icon: icons.audio.type.mic,
+  title: "Source Selector",
+  content: [
+    Widget.Box({
+      vertical: true,
+      children: audio.bind("microphones").as((a: Stream[]) => a
+        .filter(({ stream }) => !ignore.value.includes(stream.description))
+        .map(SourceItem)),
     }),
     Widget.Separator(),
     SettingsButton(),

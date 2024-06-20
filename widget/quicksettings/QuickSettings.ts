@@ -1,7 +1,7 @@
 import type Gtk from "gi://Gtk?version=3.0"
 import { ProfileSelector, ProfileToggle } from "./widgets/PowerProfile"
 import { Header } from "./widgets/Header"
-import { Volume, Microphone, SinkSelector, AppMixer } from "./widgets/Volume"
+import { Volume, Microphone, SinkSelector, SourceSelector, AppMixer } from "./widgets/Volume"
 import { Brightness } from "./widgets/Brightness"
 import { WifiToggle, WifiSelection } from "./widgets/Network"
 import { VpnToggle, VpnConnections } from "./widgets/VPN"
@@ -90,7 +90,10 @@ const Settings = (
             [Volume],
             [SinkSelector, AppMixer],
           ),
-          Microphone(),
+          Row(
+            [Microphone],
+            [SourceSelector],
+          ),
           Brightness(),
         ],
       }),

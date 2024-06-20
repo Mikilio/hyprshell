@@ -66,6 +66,7 @@ export default {
     type: {
       headset: "audio-headphones-symbolic",
       speaker: "audio-speakers-symbolic",
+      microphone: "audio-input-microphone-symbolic",
       card: "audio-card-symbolic",
     },
     mixer: "mixer-symbolic",

@@ -87,10 +87,10 @@ function MicrophoneMute() {
 
 function KeyboardLayout() {
   const icon = Widget.Icon({
-    icon: "input-keyboard",
+    icon: "input-keyboard-symbolic",
     size: 58,
   })
-  
+
   const label = Widget.Label("")
 
   const box = Widget.Box({
@@ -109,15 +109,15 @@ function KeyboardLayout() {
   return revealer.hook(
     hyprland,
     (self, _keyboardname: string, layoutname: string) => Utils.idle(() => {
-        label.label = layoutname
-        self.reveal_child = true
-        count++
+      label.label = layoutname.match(/\(([^),]+)[),]?/)?.[1]
+      self.reveal_child = true
+      count++
 
-        Utils.timeout(DELAY, () => {
-          count--
-          if (count === 0)
-            revealer.reveal_child = false
-        })
+      Utils.timeout(DELAY, () => {
+        count--
+        if (count === 0)
+          revealer.reveal_child = false
+      })
     }),
     'keyboard-layout',
   )

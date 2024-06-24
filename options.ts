@@ -6,11 +6,6 @@ import icons from "lib/icons"
 const options = mkOptions(OPTIONS, {
   autotheme: opt(false),
 
-  wallpaper: {
-    resolution: opt<import("service/wallpaper").Resolution>(1920),
-    market: opt<import("service/wallpaper").Market>("random"),
-  },
-
   theme: {
     dark: {
       primary: {

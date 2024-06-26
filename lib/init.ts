@@ -7,6 +7,7 @@ export default function init() {
     lowBattery()
     notifications()
     hyprland()
+    Utils.exec("nm-applet");
   } catch (error) {
     logError(error)
   }

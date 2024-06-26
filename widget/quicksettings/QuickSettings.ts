@@ -25,7 +25,7 @@ type Switch = () => Gtk.Widget;
 
 const Options = () => {
   let options: Array<[Switch, Switch] | [Switch]> = [];
-  if (network.primary == "wifi") {
+  if (network.primary != "wired") {
     options.push([WifiToggle, WifiSelection]);
   }
   if (Utils.exec("which bluetoothctl", () => true, () => false)) {

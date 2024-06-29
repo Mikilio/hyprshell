@@ -4,7 +4,6 @@ import { Header } from "./widgets/Header"
 import { Volume, Microphone, SinkSelector, SourceSelector, AppMixer } from "./widgets/Volume"
 import { Brightness } from "./widgets/Brightness"
 import { WifiToggle, WifiSelection } from "./widgets/Network"
-import { VpnToggle, VpnConnections } from "./widgets/VPN"
 import { BluetoothToggle, BluetoothDevices } from "./widgets/Bluetooth"
 import { DND } from "./widgets/DND"
 import { DarkModeToggle } from "./widgets/DarkMode"
@@ -33,9 +32,6 @@ const Options = () => {
   }
   if (powerprof.active_profile) {
     options.push([ProfileToggle, ProfileSelector]);
-  }
-  if (network.vpn.connections.length > 0) {
-    options.push([VpnToggle, VpnConnections]);
   }
   options.push([DarkModeToggle]);
   options.push([MicMute]);

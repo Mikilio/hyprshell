@@ -60,7 +60,7 @@
 
   config = stdenv.mkDerivation {
     inherit name;
-    src = ./.;
+    src = ./..;
 
     buildPhase = ''
       ${esbuild}/bin/esbuild \

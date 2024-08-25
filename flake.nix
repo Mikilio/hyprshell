@@ -1,14 +1,14 @@
 {
-  description = "Configurations of Aylur";
+  description = "A awsome AGS based shell for Hyprland";
 
   outputs = inputs @ {
     self,
-    home-manager,
     nixpkgs,
     ...
   }: {
     packages.x86_64-linux.default =
-      nixpkgs.legacyPackages.x86_64-linux.callPackage ./. {inherit inputs;};
+      nixpkgs.legacyPackages.x86_64-linux.callPackage ./nix/package.nix {inherit inputs;};
+    homeManagerModules.default = import ./nix/hm-module.nix self;
   };
 
   inputs = {
@@ -19,29 +19,7 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    hyprland.url = "git+https://github.com/hyprwm/Hyprland?submodules=1";
-
-    hyprland-plugins = {
-      url = "github:hyprwm/hyprland-plugins";
-      inputs.hyprland.follows = "hyprland";
-    };
-
-    hyprland-hyprspace = {
-      url = "github:KZDKM/Hyprspace";
-      inputs.hyprland.follows = "hyprland";
-    };
-
     ags.url = "github:Aylur/ags";
     astal.url = "github:Aylur/astal";
-
-    lf-icons = {
-      url = "github:gokcehan/lf";
-      flake = false;
-    };
-
-    firefox-gnome-theme = {
-      url = "github:rafaelmardojai/firefox-gnome-theme";
-      flake = false;
-    };
   };
 }

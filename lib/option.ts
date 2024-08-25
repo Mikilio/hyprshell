@@ -4,6 +4,17 @@ type OptProps = {
     persistent?: boolean
 }
 
+function getValueFromId(obj, id) {
+  const keys = id.split('.').filter(key => key)
+  return keys.reduce((acc, key) => {
+    const index = Number(key)
+    if (!isNaN(index)) {
+      return acc && acc[index] !== undefined ? acc[index] : undefined
+    }
+    return acc && acc[key] !== undefined ? acc[key] : undefined
+  }, obj)
+}
+
 export class Opt<T = unknown> extends Variable<T> {
     static { Service.register(this) }
 
@@ -24,7 +35,7 @@ export class Opt<T = unknown> extends Variable<T> {
     }
 
     init(cacheFile: string) {
-        const cacheV = JSON.parse(Utils.readFile(cacheFile) || "{}")[this.id]
+        const cacheV = getValueFromId(JSON.parse(Utils.readFile(cacheFile) || '{}'), this.id)
         if (cacheV !== undefined)
             this.value = cacheV
 

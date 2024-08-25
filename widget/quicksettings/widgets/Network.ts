@@ -5,18 +5,6 @@ import options from "options"
 const { wifi, vpn } = await Service.import("network")
 import { type VpnConnection } from "types/service/network"
 
-export const WifiToggle = () => ArrowToggleButton({
-  name: "wifi",
-  icon: wifi.bind("icon_name"),
-  label: wifi.bind("ssid").as(ssid => ssid || "Not Connected"),
-  connection: [wifi, () => wifi.enabled],
-  deactivate: () => wifi.enabled = false,
-  activate: () => {
-    wifi.enabled = true
-    wifi.scan()
-  },
-})
-
 export const VpnToggle = () => ArrowToggleButton({
   name: "vpn",
   icon: "network-vpn",
@@ -55,6 +43,18 @@ const VpnItem = (conn: VpnConnection) => Widget.Box({
       },
     }),
   ],
+})
+
+export const WifiToggle = () => ArrowToggleButton({
+  name: "wifi",
+  icon: wifi.bind("icon_name"),
+  label: wifi.bind("ssid").as(ssid => ssid || "Not Connected"),
+  connection: [wifi, () => wifi.enabled],
+  deactivate: () => wifi.enabled = false,
+  activate: () => {
+    wifi.enabled = true
+    wifi.scan()
+  },
 })
 
 export const WifiSelection = () => Menu({

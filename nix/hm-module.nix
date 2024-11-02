@@ -1,4 +1,10 @@
-self: { config, pkgs, lib, ...}:
+self:
+{
+  config,
+  pkgs,
+  lib,
+  ...
+}:
 let
   inherit (pkgs.stdenv.hostPlatform) system;
   inherit (lib.options) mkOption mkEnableOption;
@@ -6,7 +12,8 @@ let
   jsonFormat = pkgs.formats.json { };
 
   defaultPackage = self.packages.${system}.default;
-in {
+in
+{
   options.programs.hyprshell = {
     enable = mkEnableOption "hyprshell";
     package = mkOption {
@@ -17,16 +24,13 @@ in {
         By default, this option will use the `packages.default` as exposed by this flake
       '';
     };
-    systemd = mkOption {
-      default = false;
-      description = ''
-        Starts Kaizen as a systemd service.
+    systemd = mkEnableOption ''
+      Starts Kaizen as a systemd service.
 
-        This will reload the configuration on profile activation.
-      '';
-    };
-    settings = lib.mkOption {
-      type = jsonFormat.type;
+      This will reload the configuration on profile activation.
+    '';
+    settings = mkOption {
+      inherit (jsonFormat) type;
       default = { };
       example = lib.literalExpression ''
         {
@@ -49,40 +53,41 @@ in {
         # TODO: make documentation
         for the documentation.
       '';
-    }; 
+    };
   };
 
   config = lib.mkIf cfg.enable {
 
     home.packages = [ cfg.package ];
-    
-    xdg.dataFile = lib.mkIf (cfg.settings != {}) {
-      "ags/config.json".source =
-        jsonFormat.generate "config.json" cfg.settings;
+
+    xdg.dataFile = lib.mkIf (cfg.settings != { }) {
+      "ags/config.json".source = jsonFormat.generate "config.json" cfg.settings;
     };
 
-    systemd.user.services.hyprshell = let
-      cmd = "${cfg.package}/bin/hyprshell -b hyprshell";
-    in lib.mkIf cfg.systemd {
-      Unit = {
-        Description = "A linux desktop environment configuration using Aylur's Gtk Shell.";
-        Documentation = "https://github.com/Mikilio/hyprshell";
-        PartOf = ["graphical-session.target"];
-        After = ["graphical-session.target"];
-        Before = ["xdg-desktop-autostart.target"];
-      };
+    systemd.user.services.hyprshell =
+      let
+        cmd = "${cfg.package}/bin/hyprshell -b hyprshell";
+        systemdTarget = "graphical-session.target";
+      in
+      lib.mkIf cfg.systemd {
+        Unit = {
+          Description = "A linux desktop environment configuration using Aylur's Gtk Shell.";
+          Documentation = "https://github.com/Mikilio/hyprshell";
+          PartOf = [ systemdTarget ];
+          After = [ systemdTarget ];
+        };
 
-      Service = {
-        ExecStart = cmd;
-        ExecReload = "${cmd}; ${cmd} quit"; 
-        ExecStop = "${cmd} quit";
-        Restart = "on-failure";
-        KillMode = "mixed";
-      };
+        Service = {
+          ExecStart = cmd;
+          ExecReload = "${cmd}; ${cmd} quit";
+          ExecStop = "${cmd} quit";
+          Restart = "on-failure";
+          KillMode = "mixed";
+        };
 
-      Install = {
-        WantedBy = ["graphical-session.target"];
+        Install = {
+          WantedBy = [ systemdTarget ];
+        };
       };
-    };
   };
 }

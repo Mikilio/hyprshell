@@ -21,14 +21,17 @@
   networkmanagerapplet,
   gtk3,
   which,
-}: let
+  coreutils,
+}:
+let
   name = "hyprshell";
 
   ags = inputs.ags.packages.${system}.default.override {
-    extraPackages = [accountsservice];
+    extraPackages = [ accountsservice ];
   };
 
   dependencies = [
+    coreutils
     which
     dart-sass
     fd
@@ -89,14 +92,14 @@
     '';
   };
 in
-  stdenv.mkDerivation {
-    inherit name;
-    src = config;
+stdenv.mkDerivation {
+  inherit name;
+  src = config;
 
-    installPhase = ''
-      mkdir -p $out/bin
-      cp -r . $out
-      cp ${desktop} $out/bin/${name}
-      cp ${greeter} $out/bin/greeter
-    '';
-  }
+  installPhase = ''
+    mkdir -p $out/bin
+    cp -r . $out
+    cp ${desktop} $out/bin/${name}
+    cp ${greeter} $out/bin/greeter
+  '';
+}
